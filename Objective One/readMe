@@ -1,0 +1,4 @@
+- `main.cpp`: Orchestrates all benchmarks and writes results to `results.txt`
+- `ecdsa.cpp`, `falcon.cpp`, `sphincs_benchmark.cpp`, `sphincs_fast.cpp`, `ml_dsa.cpp`: Implement per-algorithm benchmarks
+- `util.cpp/h`: Shared data structures and statistics utilities
+- `lib.cpp/h`: Placeholder for additional utility functions
