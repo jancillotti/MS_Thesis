@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include "util.h"
+size_t current_message_len = 2500;
 
 std::vector<int64_t> sign_times;
 std::vector<int64_t> verify_times;

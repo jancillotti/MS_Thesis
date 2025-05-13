@@ -11,6 +11,7 @@
 #include <cstdint>
 
 const int ITERATIONS = 1000;
+extern size_t current_message_len;
 
 extern std::vector<int64_t> sign_times;
 extern std::vector<int64_t> verify_times;

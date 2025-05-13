@@ -11,7 +11,6 @@
 #include "util.h"
 
 #define ITERATIONS 1000
-size_t current_message_len = 2500; // will be overridden per test case
 
 
 // Total time process has been actively executing on the CPU.
@@ -29,7 +28,7 @@ int sign_and_verify_ecdsa() {
     // Generate a new ECDSA key pair
     auto start = std::chrono::high_resolution_clock::now();
 
-    Botan::ECDSA_PrivateKey key(rng, Botan::EC_Group::from_name("secp256r1"));
+    Botan::ECDSA_PrivateKey key(rng, Botan::EC_Group::from_name("secp256k1"));
     auto stop = std::chrono::high_resolution_clock::now();
     keygen_times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count());
 
@@ -73,12 +72,13 @@ int sign_and_verify_ecdsa() {
 int run_ecdsa_benchmark(std::ostream &out) {
     unsigned long long average_keygen, average_sign_time, average_verify_time, stddev_sign_time, stddev_verify_time,
             average_sign_cpu, average_verify_cpu;
-    size_t message_sizes[] = {32, 64, 128, 512, 1024, 2500, 4096};
+    size_t message_sizes[] = {4, 32, 64, 128, 512, 1024, 2500, 4096};
 
     for (size_t msg_size: message_sizes) {
         current_message_len = msg_size;
 
         for (int i = 0; i < ITERATIONS; i++) {
+            std::cout << "ECDSA i=" << i << "\t";
             sign_and_verify_ecdsa();
         }
         get_average_keygen_time(average_keygen, keygen_times);
@@ -88,6 +88,7 @@ int run_ecdsa_benchmark(std::ostream &out) {
         get_stddev_verify(stddev_verify_time, verify_times);
         get_average_sign_cpu_time(average_sign_cpu, sign_cpu_usgage);
         get_average_verify_cpu_time(average_verify_cpu, verify_cpu_usgage);
+        out << "\n";
         out << "=== ECDSA Results ===\n";
         out << "Message size: " << current_message_len << " bytes\n";
         record_results(average_keygen, average_sign_time, average_sign_cpu, average_verify_time,

@@ -8,6 +8,7 @@
 #include <sys/resource.h> // for getrusage()
 
 #include "util.h"
+#define ITERATIONS 1000
 
 static long long get_cpu_time_microseconds() {
     struct rusage usage;
@@ -29,8 +30,11 @@ static int sign_and_verify_sphincs() {
     auto stop = std::chrono::high_resolution_clock::now();
     keygen_times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count());
 
-    Botan::PK_Signer signer(priv_key, rng, ""); // SPHINCS+ doesn't take padding options
-    Botan::secure_vector<uint8_t> msg{0x01, 0x02, 0x03, 0x04};
+    Botan::PK_Signer signer(priv_key, rng, "");
+    // Message generation
+    Botan::secure_vector<uint8_t> msg(current_message_len);
+    rng.randomize(msg.data(), msg.size());
+    //Botan::secure_vector<uint8_t> msg{0x01, 0x02, 0x03, 0x04};
 
     start = std::chrono::high_resolution_clock::now();
     auto start_cpu = get_cpu_time_microseconds();
@@ -64,27 +68,31 @@ static int sign_and_verify_sphincs() {
 
 int run_sphincs_benchmark(std::ostream& out) {
     unsigned long long average_keygen, average_sign_time, average_verify_time, stddev_sign_time, stddev_verify_time, average_sign_cpu, average_verify_cpu;
+    size_t message_sizes[] = {4, 32, 64, 128, 512, 1024, 2500, 4096};
+    for (size_t msg_size: message_sizes) {
+        current_message_len = msg_size;
+        for (int i = 0; i < ITERATIONS; i++) {
+            std::cout << "SPHINCS+ Robust i=" << i << "\t";
+            sign_and_verify_sphincs();
+        }
+        get_average_keygen_time(average_keygen, keygen_times);
+        get_average_sign_time(average_sign_time, sign_times);
+        get_average_verify_time(average_verify_time, verify_times);
+        get_stddev_sign(stddev_sign_time, sign_times);
+        get_stddev_verify(stddev_verify_time, verify_times);
+        get_average_sign_cpu_time(average_sign_cpu, sign_cpu_usgage);
+        get_average_verify_cpu_time(average_verify_cpu, verify_cpu_usgage);
+        out << "\n";
+        out << "=== SPHINCS+ Robust Results ===\n";
+        out << "Message size: " << current_message_len << " bytes\n";
 
-    for (int i = 0; i < ITERATIONS; i++) {
-        std::cout << "SPHINCS+ i=" << i << "\t";
-        sign_and_verify_sphincs();
+        record_results(average_keygen ,average_sign_time, average_sign_cpu, average_verify_time,
+                          average_verify_cpu, stddev_sign_time, stddev_verify_time, out);
+
+        sign_times.clear();
+        verify_times.clear();
+        sign_cpu_usgage.clear();
+        verify_cpu_usgage.clear();
     }
-    get_average_keygen_time(average_keygen, keygen_times);
-    get_average_sign_time(average_sign_time, sign_times);
-    get_average_verify_time(average_verify_time, verify_times);
-    get_stddev_sign(stddev_sign_time, sign_times);
-    get_stddev_verify(stddev_verify_time, verify_times);
-    get_average_sign_cpu_time(average_sign_cpu, sign_cpu_usgage);
-    get_average_verify_cpu_time(average_verify_cpu, verify_cpu_usgage);
-
-    out << "=== SPHINCS+ Results ===\n";
-    record_results(average_keygen ,average_sign_time, average_sign_cpu, average_verify_time,
-                      average_verify_cpu, stddev_sign_time, stddev_verify_time, out);
-
-    sign_times.clear();
-    verify_times.clear();
-    sign_cpu_usgage.clear();
-    verify_cpu_usgage.clear();
-
     return 0;
 }
