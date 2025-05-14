@@ -79,14 +79,12 @@ void record_results(unsigned long long average_key_time,
                     unsigned long long stddev_sign_time,
                     unsigned long long stddev_verify_time,
                     std::ostream& out) {
-    out << "Average key generation time (ns):\t\t" << average_key_time / 1'000'000.0 << "\n";
-
-    out << "Average sign time (ns):\t\t" << average_sign_time / 1'000'000.0<< "\n";
+    out << "Average key generation time (ms):\t\t" << average_key_time / 1'000'000.0 << "\n";
+    out << "Average sign time (ms):\t\t" << average_sign_time / 1'000'000.0<< "\n";
+    out << "Average verify time (ms):\t" << average_verify_time / 1'000'000.0 << "\n";
     out << "Average verify cpu (ns):\t" << average_sign_cpu / 1'000'000.0<< "\n";
-    out << "Std. sign time (ns):\t\t" << stddev_sign_time / 1'000'000.0<< "\n\n";
-
-    out << "Average verify time (ns):\t" << average_verify_time / 1'000'000.0 << "\n";
     out << "Average verify cpu (ns):\t" << average_verify_cpu / 1'000'000.0<< "\n";
-    out << "Std. verify time (ns):\t\t" << stddev_verify_time / 1'000'000.0<< "\n";
+    //out << "Std. sign time (ns):\t\t" << stddev_sign_time / 1'000'000.0<< "\n\n";
+   // out << "Std. verify time (ns):\t\t" << stddev_verify_time / 1'000'000.0<< "\n";
 
 }

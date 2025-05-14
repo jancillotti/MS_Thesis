@@ -20,12 +20,10 @@ static long long get_cpu_time_microseconds() {
 
 static int sign_and_verify_sphincs() {
     Botan::AutoSeeded_RNG rng;
-
     // Choose a parameter set (you can also use "SPHINCS+-SHAKE-128s-simple" etc.)
-    std::string sphincs_params = "SPHINCS+-SHA2-128s-simple";
     auto start = std::chrono::high_resolution_clock::now();
 
-    auto priv_key = Botan::SphincsPlus_PrivateKey(rng, Botan::Sphincs_Parameter_Set::Sphincs128Small, Botan::Sphincs_Hash_Type::Sha256);
+    auto priv_key = Botan::SphincsPlus_PrivateKey(rng, Botan::Sphincs_Parameter_Set::SLHDSA128Small, Botan::Sphincs_Hash_Type::Sha256);
     const auto pub_key = priv_key.public_key();
     auto stop = std::chrono::high_resolution_clock::now();
     keygen_times.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count());
@@ -93,6 +91,8 @@ int run_sphincs_benchmark(std::ostream& out) {
         verify_times.clear();
         sign_cpu_usgage.clear();
         verify_cpu_usgage.clear();
+        keygen_times.clear();
+
     }
     return 0;
 }

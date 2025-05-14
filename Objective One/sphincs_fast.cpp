@@ -93,6 +93,8 @@ int run_sphincs_fast_benchmark(std::ostream &out) {
         verify_times.clear();
         sign_cpu_usgage.clear();
         verify_cpu_usgage.clear();
+        keygen_times.clear();
+
     }
     return 0;
 }
