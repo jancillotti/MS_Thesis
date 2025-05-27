@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Labels and data
-schemes = ["ECDSA", "Dilithium", "Falcon", "SPHINCS+ Robust", "SPHINCS+ Simple"]
+schemes = ["ECDSA", "ML-DSA-44", "Falcon-512", "SPHINCS+ 128 Robust", "SPHINCS+ 128 Simple"]
 public_keys = np.array([64, 1312, 897, 32, 32])
 signatures = np.array([64, 2420, 690, 7856, 17088])
 bsm_overhead = np.array([162, 2580, 872, 7956, 17256])  # Total overhead (includes signed BSM, etc.)
@@ -17,7 +17,7 @@ ax.bar(index, signatures, bar_width, bottom=public_keys, label='Signature')
 ax.bar(index, bsm_overhead, bar_width, bottom=public_keys + signatures, label='Signed BSM + Overhead')
 
 # Labels and formatting
-ax.set_xlabel('Signature Scheme')
+ax.set_xlabel('Signature Schemes')
 ax.set_ylabel('Bytes')
 ax.set_title('Stacked Frame Size (ECDSA and PQC) vs. DSRC Payload Constraint')
 ax.set_xticks(index)
