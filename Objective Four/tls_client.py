@@ -6,9 +6,8 @@ def run_client(port, cafile):
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.maximum_version = ssl.TLSVersion.TLSv1_3
     context.minimum_version = ssl.TLSVersion.TLSv1_3
-    # Force certificate verification
     context.verify_mode = ssl.CERT_REQUIRED
-    context.check_hostname = True  # optional, but recommended
+    context.check_hostname = True  
     context.load_verify_locations(cafile=cafile)
     start = time.time()
     with socket.create_connection(('localhost', port)) as sock:
