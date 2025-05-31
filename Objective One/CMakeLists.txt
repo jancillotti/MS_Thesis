@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.30)
 project(benchmarking)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
 
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(BOTAN REQUIRED botan-3)
@@ -17,6 +19,10 @@ add_executable(benchmarking
         falcon.cpp
         sphincs_fast.cpp
         ecdsa.cpp
+        ecdsa_falcon.cpp
+        ecdsa_mldsa.cpp
+        ecdsa_sphincs_robust.cpp
+        ecdsa_sphincs_simple.cpp
 )
 target_include_directories(benchmarking PUBLIC ${BOTAN_INCLUDE_DIRS})
 target_link_directories(benchmarking PUBLIC ${BOTAN_LIBRARY_DIRS})
